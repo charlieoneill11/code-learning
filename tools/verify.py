@@ -29,10 +29,18 @@ def pytest(cwd: Path) -> tuple[int, int]:
     return count("passed"), count("failed") + count("error")
 
 
+def solutions_ref() -> str:
+    """The local solutions branch if there is one, else the remote's (a fresh clone has only main)."""
+    for ref in ("solutions", "origin/solutions"):
+        if subprocess.run(["git", "rev-parse", "--verify", "-q", ref], cwd=ROOT, capture_output=True).returncode == 0:
+            return ref
+    sys.exit("No solutions branch found. Try: git fetch origin solutions")
+
+
 def main() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         tree = Path(tmp) / "solutions"
-        subprocess.run(["git", "worktree", "add", "--detach", str(tree), "solutions"], cwd=ROOT, check=True, capture_output=True)
+        subprocess.run(["git", "worktree", "add", "--detach", str(tree), solutions_ref()], cwd=ROOT, check=True, capture_output=True)
         try:
             passed, failed = pytest(tree)
             print(f"reference solution: {passed} passed, {failed} failed")
