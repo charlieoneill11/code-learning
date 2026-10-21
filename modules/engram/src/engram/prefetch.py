@@ -71,7 +71,8 @@ class PrefetchedMemory(nn.Module):
         background: submit self.host.gather to self.pool and keep the Future
         in self._pending. Don't wait for it."""
         # >>> step 9: your code
-        raise NotImplementedError("step 9")
+        rows = self.memory.row_ids(cids)
+        self._pending = self.pool.submit(self.host.gather, rows)
         # <<<
 
     def forward(self, cids: Tensor) -> Tensor:
@@ -81,7 +82,11 @@ class PrefetchedMemory(nn.Module):
         clear self._pending, and flatten the heads together.
         """
         # >>> step 9: your code
-        raise NotImplementedError("step 9")
+        if self._pending is None:
+            self.start(cids)
+        rows = self._pending.result()
+        self._pending = None
+        return rows.flatten(-2)
         # <<<
 
 
@@ -90,7 +95,8 @@ def prefetch_all(model: nn.Module, ids: Tensor) -> None:
     pass. Each Engram has its own lookup table (engram.lookup) for turning
     ids into canonical IDs, and its memory is a PrefetchedMemory."""
     # >>> step 9: your code
-    raise NotImplementedError("step 9")
+    for engram in model.engrams():
+        engram.memory.start(compress(ids, engram.lookup))
     # <<<
 
 

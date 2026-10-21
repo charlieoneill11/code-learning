@@ -70,5 +70,9 @@ class Engram(nn.Module):
         if not self.enabled:
             return h.new_zeros(h.shape)
         # >>> step 7: your code
-        raise NotImplementedError("step 7")
+        cids = compress(ids, self.lookup)
+        e = self.memory(cids)
+        v, alpha = self.gate(h, e)
+        self.last_alpha = alpha.detach()
+        return v + self.conv(v)
         # <<<

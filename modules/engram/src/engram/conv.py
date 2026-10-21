@@ -30,5 +30,8 @@ class ShortConv(nn.Module):
         left only, and remember nn.Conv1d wants (B, channels, T).
         """
         # >>> step 6: your code
-        raise NotImplementedError("step 6")
+        y = self.norm(x).transpose(1, 2)
+        y = F.pad(y, ((self.kernel_size - 1) * self.dilation, 0))
+        y = self.conv(y)
+        return F.silu(y).transpose(1, 2)
         # <<<

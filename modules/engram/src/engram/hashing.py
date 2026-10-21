@@ -26,7 +26,11 @@ def ngram_hash(ngrams: Tensor, multipliers: Tensor, table_size: int) -> Tensor:
         11*3 XOR 2*5 = 33 XOR 10 = 43, and 43 mod 13 = 4.
     """
     # >>> step 3: your code
-    raise NotImplementedError("step 3")
+    newest_first = ngrams.flip(-1) * multipliers
+    mix = newest_first[..., 0]
+    for k in range(1, ngrams.shape[-1]):
+        mix = torch.bitwise_xor(mix, newest_first[..., k])
+    return mix % table_size
     # <<<
 
 

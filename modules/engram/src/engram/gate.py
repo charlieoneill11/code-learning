@@ -36,5 +36,9 @@ class ContextGate(nn.Module):
         Use self.norm_h on h and self.norm_k on k.
         """
         # >>> step 5: your code
-        raise NotImplementedError("step 5")
+        k = self.W_k(e)
+        v = self.W_v(e)
+        score = (self.norm_h(h) * self.norm_k(k)).sum(dim=-1, keepdim=True)
+        alpha = (score / math.sqrt(self.d_model)).sigmoid()
+        return alpha * v, alpha
         # <<<

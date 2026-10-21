@@ -24,5 +24,7 @@ def suffix_ngrams(ids: Tensor, n: int, pad_id: int) -> Tensor:
           [5, 6, 7]]]
     """
     # >>> step 2: your code
-    raise NotImplementedError("step 2")
+    T = ids.shape[1]
+    padded = F.pad(ids, (n - 1, 0), value=pad_id)
+    return torch.stack([padded[:, k : k + T] for k in range(n)], dim=-1)
     # <<<

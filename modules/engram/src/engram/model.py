@@ -70,7 +70,11 @@ class Block(nn.Module):
         pass it h as is.
         """
         # >>> step 8: your code
-        raise NotImplementedError("step 8")
+        if self.engram is not None:
+            h = h + self.engram(h, ids)
+        h = h + self.attn(self.norm1(h))
+        h = h + self.mlp(self.norm2(h))
+        return h
         # <<<
 
 

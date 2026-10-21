@@ -67,7 +67,12 @@ class NgramMemory(nn.Module):
         uses self.multipliers[:n], and head j adds self.offsets[j].
         """
         # >>> step 4: your code
-        raise NotImplementedError("step 4")
+        cols = []
+        for i, n in enumerate(self.orders):
+            grams = suffix_ngrams(cids, n, self.pad_id)
+            for size in self.table_sizes[i]:
+                cols.append(ngram_hash(grams, self.multipliers[:n], size))
+        return torch.stack(cols, dim=-1) + self.offsets
         # <<<
 
     def forward(self, cids: Tensor) -> Tensor:
@@ -78,5 +83,5 @@ class NgramMemory(nn.Module):
         the same column order as row_ids.
         """
         # >>> step 4: your code
-        raise NotImplementedError("step 4")
+        return self.table(self.row_ids(cids)).flatten(-2)
         # <<<

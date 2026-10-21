@@ -27,7 +27,14 @@ def normalize(text: str) -> str:
     Examples: " Apple" -> "apple", "ÉCOLE" -> "ecole", "\\n\\n" -> " ".
     """
     # >>> step 1: your code
-    raise NotImplementedError("step 1")
+    s = unicodedata.normalize("NFKC", text)
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    s = s.lower()
+    s = re.sub(r"[ \t\r\n]+", " ", s)
+    if s == " ":
+        return s
+    return s.strip()
     # <<<
 
 
@@ -44,7 +51,14 @@ def build_lookup(vocab: list[str]) -> tuple[Tensor, int]:
     (len(vocab),) with lookup[i] = canonical ID of token i.
     """
     # >>> step 1: your code
-    raise NotImplementedError("step 1")
+    key_to_id: dict[str, int] = {}
+    lookup = []
+    for text in vocab:
+        key = normalize(text) or text
+        if key not in key_to_id:
+            key_to_id[key] = len(key_to_id)
+        lookup.append(key_to_id[key])
+    return torch.tensor(lookup, dtype=torch.long), len(key_to_id)
     # <<<
 
 
