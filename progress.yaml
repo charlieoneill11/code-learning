@@ -1,0 +1,5 @@
+# Where Charlie is. The agent keeps this up to date; edit it freely.
+module: engram
+current_step: 1
+done: []
+# entries look like:  - {step: 1, date: 2026-10-21}
